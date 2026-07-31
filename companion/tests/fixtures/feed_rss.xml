@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<rss version="2.0"><channel><title>Example News</title>
+<item><title>Kernel 7.0 released</title><description>&lt;p&gt;The long-awaited release brings scheduler improvements and better power management.&lt;/p&gt;</description><link>article.html</link></item>
+<item><title>E-ink prices fall</title><description>Panel prices dropped 12% this quarter.</description><link>https://example.com/2</link></item>
+<item><title>Third story</title><description>Body three.</description><link>https://example.com/3</link></item>
+</channel></rss>

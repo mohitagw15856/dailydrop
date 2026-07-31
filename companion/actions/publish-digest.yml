@@ -1,0 +1,39 @@
+# GitHub Actions alternative to the n8n workflow: builds the digest every
+# morning and publishes it to gh-pages, so the device can fetch it from
+# https://<user>.github.io/<repo>/<YYYY-MM-DD>.drop (a GitHub raw-style URL).
+#
+# To use: copy this file to .github/workflows/ in a repo that holds your
+# config.yaml (plus quotes/ICS fixtures), and commit your config as
+# digest-config/config.yaml.
+name: Publish daily digest
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install DailyDrop companion
+        run: pip install "dailydrop-companion @ git+https://github.com/mohitagw15856/dailydrop.git#subdirectory=companion"
+      - name: Build digest
+        run: dailydrop build --config digest-config/config.yaml --out out
+      - name: Publish to gh-pages
+        run: |
+          git config user.name "dailydrop-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git fetch origin gh-pages || git checkout --orphan gh-pages
+          git checkout gh-pages || true
+          cp out/*.drop .
+          git add *.drop
+          git commit -m "Digest $(date -u +%F)" || echo "nothing to publish"
+          git push origin gh-pages

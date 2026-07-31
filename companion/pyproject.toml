@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dailydrop-companion"
+version = "0.1.0"
+description = "Builds daily .drop digests for the DailyDrop e-reader app"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = [
+  "PyYAML>=6.0",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+
+[project.scripts]
+dailydrop = "dailydrop.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["dailydrop*"]

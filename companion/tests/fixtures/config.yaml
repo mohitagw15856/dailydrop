@@ -1,0 +1,13 @@
+title: Test digest
+wrap: 64
+feeds:
+  - url: feed_rss.xml
+    name: Example News
+    limit: 2
+weather:
+  source: weather_current.json
+  units: metric
+calendar:
+  - cal.ics
+quotes: quotes.txt
+reading_goal: Read 20 pages of The Three-Body Problem
