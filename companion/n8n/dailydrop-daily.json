@@ -1,0 +1,52 @@
+{
+  "name": "DailyDrop daily build",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "cronExpression", "expression": "0 6 * * *" }]
+        }
+      },
+      "name": "Every morning 06:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "command": "dailydrop build --config /data/dailydrop/config.yaml --out /data/dailydrop/out"
+      },
+      "name": "Build digest",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "filePath": "=/data/dailydrop/out/{{ $now.format('yyyy-MM-dd') }}.drop"
+      },
+      "name": "Read digest file",
+      "type": "n8n-nodes-base.readBinaryFile",
+      "typeVersion": 1,
+      "position": [440, 0]
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://YOUR-SERVER/digests/{{ $now.format('yyyy-MM-dd') }}.drop",
+        "sendBinaryData": true,
+        "binaryPropertyName": "data"
+      },
+      "name": "Publish (HTTP PUT)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [660, 0]
+    }
+  ],
+  "connections": {
+    "Every morning 06:00": { "main": [[{ "node": "Build digest", "type": "main", "index": 0 }]] },
+    "Build digest": { "main": [[{ "node": "Read digest file", "type": "main", "index": 0 }]] },
+    "Read digest file": { "main": [[{ "node": "Publish (HTTP PUT)", "type": "main", "index": 0 }]] }
+  },
+  "settings": {}
+}
